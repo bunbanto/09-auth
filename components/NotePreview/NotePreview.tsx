@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getNoteById } from '@/lib/api';
+import { getNoteById } from '@/lib/api/clientApi';
 import { useRouter } from 'next/navigation';
 import css from './NotePreview.module.css';
 import { useCallback } from 'react';
@@ -22,7 +22,7 @@ export default function NotePreview({ id }: Props) {
     error,
   } = useQuery({
     queryKey: ['note', id],
-    queryFn: () => getNoteById(Number(id)),
+    queryFn: () => getNoteById(id),
     refetchOnMount: false,
   });
 

@@ -6,7 +6,7 @@ import Modal from '@/components/Modal/Modal';
 //import NotePreview from '@/components/NotePreview/NotePreview';
 import css from '@/app/@modal/(.)notes/[id]/NotePreview.client.module.css';
 import Loader from '@/components/Loader/Loader';
-import { getNoteById } from '@/lib/api';
+import { getNoteById } from '@/lib/api/clientApi';
 import type { Note } from '@/types/note';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,7 @@ export default function NoteDetailsClient() {
     error,
   } = useQuery<Note>({
     queryKey: ['note', id],
-    queryFn: () => getNoteById(Number(id)),
+    queryFn: () => getNoteById(String(id)),
     refetchOnMount: false,
   });
 
