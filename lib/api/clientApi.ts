@@ -12,11 +12,11 @@ export type UpdateUserRequest = {
   username: string;
 };
 
-export interface CreateNoteParams {
-  title: string;
-  content: string;
-  tag: string;
-}
+// export interface CreateNoteParams {
+//   title: string;
+//   content: string;
+//   tag: string;
+// }
 
 export const fetchNotes = async ({ search, page, tag }: FetchNotesParams) => {
   const response = await nextServer.get<FetchNotesHTTPResponse>('/notes', {

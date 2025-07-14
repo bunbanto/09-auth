@@ -16,6 +16,7 @@ export default function SignUp() {
   const handleSubmit = async (formData: FormData) => {
     try {
       const formValues = Object.fromEntries(formData) as AuthRequest;
+      console.log('Sending to API:', formValues);
       const user = await register(formValues);
       if (user) {
         setUser(user);
@@ -29,10 +30,16 @@ export default function SignUp() {
     }
   };
 
+  const handleSubmitWrapper = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    handleSubmit(formData);
+  };
+
   return (
     <>
       <h1 className={css.formTitle}>Sign up</h1>
-      <form action={handleSubmit} className={css.form}>
+      <form onSubmit={handleSubmitWrapper} className={css.form}>
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
