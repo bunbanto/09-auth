@@ -1,37 +1,41 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import Modal from '@/components/Modal/Modal';
-//import NotePreview from '@/components/NotePreview/NotePreview';
 import css from '@/app/@modal/(.)notes/[id]/NotePreview.client.module.css';
 import Loader from '@/components/Loader/Loader';
 import { getNoteById } from '@/lib/api/clientApi';
-import type { Note } from '@/types/note';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-export default function NoteDetailsClient() {
-  const { id: numId } = useParams<{ id: string }>();
-  const router = useRouter();
+type NoteDetailsClientProps = { id: string };
 
-  const id = Number(numId);
-  const handleClose = () => router.back();
+export default function NoteDetailsClient({ id }: NoteDetailsClientProps) {
+  const router = useRouter();
 
   const {
     data: note,
     isLoading,
-    error,
-  } = useQuery<Note>({
+    isError,
+  } = useQuery({
     queryKey: ['note', id],
-    queryFn: () => getNoteById(String(id)),
+    queryFn: () => getNoteById(id),
     refetchOnMount: false,
   });
+
+  const handleClose = useCallback(() => {
+    router.back();
+  }, [router]);
+
+  if (isLoading) return <p>Loading, please wait...</p>;
+  if (isError || !note) return <p>Something went wrong.</p>;
 
   return (
     <Modal onClose={handleClose}>
       {isLoading && <Loader />}
-      {error && <p>Error loading note</p>}
+      {isError && <p>Error loading note</p>}
       {note && (
         <div className={css.container}>
           <div className={css.item}>

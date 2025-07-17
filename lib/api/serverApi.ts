@@ -3,13 +3,6 @@ import { User } from '@/types/user';
 import { Note } from '@/types/note';
 import { nextServer } from './api';
 
-export const getServerMe = async (): Promise<User> => {
-  const cookieData = await cookies();
-  const { data } = await nextServer.get<User>(`/users/me`, {
-    headers: { Cookie: cookieData.toString() },
-  });
-  return data;
-};
 export interface FetchNotesHTTPResponse {
   notes: Note[];
   totalPages: number;
@@ -20,6 +13,43 @@ export interface FetchNotesParams {
   page?: number;
   tag?: string;
 }
+
+export type ServerResponse = {
+  success: boolean;
+};
+// export const getServerMe = async (): Promise<User | null> => {
+//   const cookieData = await cookies();
+//   const cookieHeader = Object.entries(cookieData.getAll())
+//     .map(([key, val]) => `${key}=${val}`)
+//     .join('; ');
+
+//   try {
+//     const { data } = await nextServer.get<User>(`/users/me`, {
+//       headers: { Cookie: cookieHeader },
+//     });
+//     return data;
+//   } catch (error) {
+//     console.error('getServerMe error:', error);
+//     return null;
+//   }
+// };
+
+export const getServerMe = async (): Promise<User> => {
+  const cookieStore = await cookies();
+
+  const cookieHeader = cookieStore
+    .getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join('; ');
+
+  const { data } = await nextServer.get<User>('/users/me', {
+    headers: {
+      Cookie: cookieHeader,
+    },
+  });
+  console.log('cookieHeader:', cookieHeader);
+  return data;
+};
 
 export const fetchNotes = async ({ search, page, tag }: FetchNotesParams) => {
   const cookieStore = await cookies();
@@ -38,14 +68,12 @@ export const fetchNotes = async ({ search, page, tag }: FetchNotesParams) => {
   return response.data;
 };
 
-export const checkSession = async (): Promise<boolean> => {
+export const checkSession = async () => {
   const cookieStore = await cookies();
-  const { data } = await nextServer.get('/auth/session', {
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
+  const res = await nextServer.get<ServerResponse>('/auth/session', {
+    headers: { Cookie: cookieStore.toString() },
   });
-  return data.success;
+  return res;
 };
 
 export const getNoteById = async (id: string) => {

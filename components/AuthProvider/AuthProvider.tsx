@@ -15,17 +15,23 @@ const AuthProvider = ({ children }: Props) => {
   );
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchUser = async () => {
-      checkSession()
-        .then(async () => {
-          const user = await getMe();
-          if (user) setUser(user);
-        })
-        .catch(() => {
-          clearIsAuthenticated();
-        });
+      try {
+        await checkSession();
+        const user = await getMe();
+        if (user && isMounted) setUser(user);
+      } catch {
+        if (isMounted) clearIsAuthenticated();
+      }
     };
+
     fetchUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, [setUser, clearIsAuthenticated]);
 
   return children;

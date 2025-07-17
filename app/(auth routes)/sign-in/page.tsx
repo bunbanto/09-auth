@@ -13,16 +13,20 @@ export default function SignIn() {
   const router = useRouter();
   const setUser = useAuthStore(state => state.setUser);
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const formValues = Object.fromEntries(formData) as AuthRequest;
+
     try {
-      const formValues = Object.fromEntries(formData) as AuthRequest;
-      const res = await login(formValues);
-      if (res) {
-        setUser(res);
-        router.replace('/profile');
-      } else {
-        setError('Invalid email or password');
-      }
+      const user = await login(formValues);
+      setUser(user);
+      router.replace('/profile');
+      console.log('Before redirect');
+      router.replace('/profile');
+      console.log('After redirect');
     } catch (error) {
       console.log('error', error);
       setError('Invalid email or password');
@@ -32,7 +36,7 @@ export default function SignIn() {
   return (
     <>
       <h1 className={css.formTitle}>Sign in</h1>
-      <form action={handleSubmit} className={css.form}>
+      <form onSubmit={handleSubmit} className={css.form}>
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input

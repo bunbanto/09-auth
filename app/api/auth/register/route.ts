@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { api } from '../../api';
 import { cookies } from 'next/headers';
 import { parse } from 'cookie';
+import { isAxiosError } from 'axios';
+import { logErrorResponse } from '../../_utils/utils';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
     const apiRes = await api.post('auth/register', body);
 
     const cookieStore = await cookies();
@@ -26,21 +29,22 @@ export async function POST(req: NextRequest) {
         if (parsed.refreshToken)
           cookieStore.set('refreshToken', parsed.refreshToken, options);
       }
-      return NextResponse.json(apiRes.data);
+      return NextResponse.json(apiRes.data, { status: apiRes.status });
     }
 
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   } catch (error) {
-    // Відповідь з повідомленням про помилку
-    let message = 'Registration failed';
-    let status = 500;
-    if (typeof error === 'object' && error !== null && 'response' in error) {
-      const err = error as {
-        response?: { data?: { message?: string }; status?: number };
-      };
-      message = err.response?.data?.message || message;
-      status = err.response?.status || status;
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
+      return NextResponse.json(
+        { error: error.message, response: error.response?.data },
+        { status: error.status }
+      );
     }
-    return NextResponse.json({ error: message }, { status });
+    logErrorResponse({ message: (error as Error).message });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

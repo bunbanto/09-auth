@@ -1,4 +1,4 @@
-import { DraftNote, Note } from '@/types/note';
+import { Note } from '@/types/note';
 import { User } from '@/types/user';
 import { nextServer } from './api';
 import { FetchNotesParams, FetchNotesHTTPResponse } from './serverApi';
@@ -11,12 +11,6 @@ export type AuthRequest = {
 export type UpdateUserRequest = {
   username: string;
 };
-
-// export interface CreateNoteParams {
-//   title: string;
-//   content: string;
-//   tag: string;
-// }
 
 export const fetchNotes = async ({ search, page, tag }: FetchNotesParams) => {
   const response = await nextServer.get<FetchNotesHTTPResponse>('/notes', {
@@ -35,23 +29,24 @@ export const getNoteById = async (id: string): Promise<Note> => {
   return data;
 };
 
-export const createNote = async (newNote: DraftNote) => {
-  const { data } = await nextServer.post<Note>('/notes', newNote);
-  return data;
+export type CreateNoteParams = {
+  title: string;
+  content: string;
+  tag?: string;
 };
 
-// export async function createNote({
-//   title,
-//   content,
-//   tag,
-// }: CreateNoteParams): Promise<Note> {
-//   const response = await nextServer.post<Note>('/notes', {
-//     title,
-//     content,
-//     tag,
-//   });
-//   return response.data;
-// }
+export async function createNote({
+  title,
+  content,
+  tag,
+}: CreateNoteParams): Promise<Note> {
+  const response = await nextServer.post<Note>('/notes', {
+    title,
+    content,
+    tag,
+  });
+  return response.data;
+}
 
 export const deleteNote = async (id: string) => {
   const response = await nextServer.delete<Note>(`/notes/${id}`);
@@ -63,9 +58,9 @@ export const login = async (logindata: AuthRequest) => {
   return data;
 };
 
-export const register = async (regdata: AuthRequest): Promise<User> => {
-  const { data } = await nextServer.post<User>('/auth/register', regdata);
-  return data;
+export const register = async (data: AuthRequest): Promise<User> => {
+  const res = await nextServer.post<User>('/auth/register', data);
+  return res.data;
 };
 
 export const logout = async (): Promise<void> => {
