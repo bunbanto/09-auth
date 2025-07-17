@@ -16,11 +16,9 @@ export async function middleware(request: NextRequest) {
 
   if (!accessToken) {
     if (refreshToken) {
-      // 🔁 Спроба оновити сесію
       const res = await checkSession();
 
       if (res.status === 200) {
-        // ⏭ Повернутись на цю ж сторінку — з оновленими куками (через бекенд)
         const response = NextResponse.redirect(new URL(request.url));
         const setCookie = res.headers['set-cookie'];
 
