@@ -13,4 +13,14 @@ export interface DraftNote {
   tag: Tag;
 }
 
-export type Tag = 'Work' | 'Todo' | 'Personal' | 'Meeting' | 'Shopping';
+export type Tag =
+  | 'Work'
+  | 'Todo'
+  | 'Personal'
+  | 'Meeting'
+  | 'Shopping'
+  | 'Ideas'
+  | 'Travel'
+  | 'Finance'
+  | 'Health'
+  | 'Important';

@@ -34,19 +34,29 @@ export default function TagsMenu() {
       </button>
       {isOpen && (
         <ul className={css.menuList}>
-          {['all', 'Work', 'Personal', 'Meeting', 'Shopping', 'Todo'].map(
-            tag => (
-              <li key={tag} className={css.menuItem}>
-                <Link
-                  onClick={() => setIsOpen(false)}
-                  href={`/notes/filter/${tag}`}
-                  className={css.menuLink}
-                >
-                  {tag === 'all' ? 'All Notes' : tag}
-                </Link>
-              </li>
-            )
-          )}
+          {[
+            'all',
+            'Work',
+            'Personal',
+            'Meeting',
+            'Shopping',
+            'Ideas',
+            'Travel',
+            'Finance',
+            'Health',
+            'Important',
+            'Todo',
+          ].map(tag => (
+            <li key={tag} className={css.menuItem}>
+              <Link
+                onClick={() => setIsOpen(false)}
+                href={`/notes/filter/${tag}`}
+                className={css.menuLink}
+              >
+                {tag === 'all' ? 'All Notes' : tag}
+              </Link>
+            </li>
+          ))}
         </ul>
       )}
     </div>
