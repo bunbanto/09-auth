@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Profile | NoteHub',
+  title: 'NoteHub - Profile',
   description:
     'View your profile information and manage your account on NoteHub.',
   openGraph: {
